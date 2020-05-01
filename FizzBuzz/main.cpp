@@ -5,7 +5,7 @@
 #include "FizzBuzz.h"
 
 size_t DoWork();
-size_t DoAsyncWork();
+//size_t DoAsyncWork();
 
 int main()
 {
