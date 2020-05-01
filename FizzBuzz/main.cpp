@@ -10,27 +10,24 @@
 std::chrono::nanoseconds DoWork();
 std::chrono::nanoseconds DoAsyncWork();
 
-static const int s_target = 100000;
-static const int s_numCounters = 200;
+static const int s_target = 1000000;
+static const int s_numCounters = 500;
 
 //static std::chrono::high_resolution_clock stopWatch;
 
 int main()
 {
-    // Scoping these to ensure they don't share any vars
-    {
-        std::cout << "Do work.\n";
-        auto timeTaken = DoWork();
-        auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken);
-        std::cout << "Do work complete. Time taken: " << milliseconds.count() / 1000 << "s " << milliseconds.count() % 1000 << "ms\n";
-    }
+    std::cout << "Do work.\n";
+    auto timeTaken = DoWork();
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken);
 
-    {
-        std::cout << "Do work async.\n";
-        auto timeTakenAsync = DoAsyncWork();
-        auto asyncMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTakenAsync);
-        std::cout << "Do async work complete. Time taken: " << asyncMilliseconds.count() / 1000 << "s " << asyncMilliseconds.count() % 1000 << "ms\n";
-    }
+    std::cout << "Do work async.\n";
+    auto timeTakenAsync = DoAsyncWork();
+    auto asyncMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTakenAsync);
+
+    std::cout << "C++ Results: \n";
+    std::cout << "Sync: Time Taken: " << milliseconds.count() / 1000 << "s " << milliseconds.count() % 1000 << "ms\n";
+    std::cout << "Async: Time Taken: " << asyncMilliseconds.count() / 1000 << "s " << asyncMilliseconds.count() % 1000 << "ms\n";
 
     system("pause");
 }
