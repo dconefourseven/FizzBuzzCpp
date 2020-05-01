@@ -3,7 +3,7 @@
 //
 
 #include "FizzBuzz.h"
-#include <iostream>
+#include <future>
 
 FizzBuzz::FizzBuzz(int _target)
 	: m_countTarget(_target)
@@ -13,41 +13,76 @@ FizzBuzz::FizzBuzz(int _target)
 
 void FizzBuzz::DoWork()
 {
-    //m_buffer = "";
-    std::cout << "Begin FizzBuzz!\n";
-    //m_complete = false;
+    m_buffer = "";
+    m_buffer += "Begin FizzBuzz!\n";
+    m_complete = false;
 
     int index = 1;
     while (index <= m_countTarget)
     {
         if (((index % 3) == 0) && ((index % 5) == 0))
         {
-            std::cout << "FizzBuzz\n";
+            m_buffer += "FizzBuzz\n";
         }
         else if ((index % 3) == 0)
         {
-            std::cout << "Fizz\n";
+            m_buffer += "Fizz\n";
         }
         else if ((index % 5) == 0)
         {
-            std::cout << "Buzz\n";
+            m_buffer += "Buzz\n";
         }
         else
         {
             char intbuff[10];
             memset(intbuff, 0, 10);
             snprintf(intbuff, 10, "%d\n", index);
-            std::cout << intbuff;
+            m_buffer += intbuff;
         }
 
         ++index;
     }
 
-    std::cout << "End FizzBuzz!\n";
-    //m_complete = true;
+    m_buffer += "End FizzBuzz!\n";
+    m_complete = true;
 }
 
 void FizzBuzz::DoAsyncWork()
 {
+    m_buffer = "";
+    m_buffer += "Begin FizzBuzz!\n";
+    m_complete = false;
 
+    std::future<void> task = std::async(std::launch::async, [&]() {
+        int index = 1;
+        while (index <= m_countTarget)
+        {
+            if (((index % 3) == 0) && ((index % 5) == 0))
+            {
+                m_buffer += "FizzBuzz\n";
+            }
+            else if ((index % 3) == 0)
+            {
+                m_buffer += "Fizz\n";
+            }
+            else if ((index % 5) == 0)
+            {
+                m_buffer += "Buzz\n";
+            }
+            else
+            {
+                char intbuff[10];
+                memset(intbuff, 0, 10);
+                snprintf(intbuff, 10, "%d\n", index);
+                m_buffer += intbuff;
+            }
+
+            ++index;
+        }
+        });
+
+    task.wait();
+
+    m_buffer += "End FizzBuzz!\n";
+    m_complete = true;
 }

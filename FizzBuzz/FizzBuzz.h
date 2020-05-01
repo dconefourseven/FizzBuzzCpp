@@ -20,13 +20,15 @@ public:
 
     void DoAsyncWork();
 
+    bool IsComplete() { return m_complete; }
+
 	// ---- Variables ----
 private:
 
     int m_countTarget = 0;
 
-    /*bool m_complete = false;
+    bool m_complete = false;
     
-    std::string m_buffer = "";*/
+    std::string m_buffer = "";
 };
 
