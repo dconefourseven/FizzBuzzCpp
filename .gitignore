@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+/.vs/FizzBuzz
+/FizzBuzz/x64/Debug
+/x64/Debug
