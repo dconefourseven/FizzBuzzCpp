@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <future>
 #include "FizzBuzz.h"
 
 std::chrono::nanoseconds DoWork();
@@ -16,15 +17,20 @@ static const int s_numCounters = 200;
 
 int main()
 {
-    std::cout << "Do work.\n";
-    auto timeTaken = DoWork();
-    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken);
-    std::cout << "Do work complete. Time taken: " << milliseconds.count() / 1000 << "s " << milliseconds.count() % 1000 << "ms\n";
+    // Scoping these to ensure they don't share any vars
+    {
+        std::cout << "Do work.\n";
+        auto timeTaken = DoWork();
+        auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken);
+        std::cout << "Do work complete. Time taken: " << milliseconds.count() / 1000 << "s " << milliseconds.count() % 1000 << "ms\n";
+    }
 
-    std::cout << "Do work async.\n";
-    auto timeTakenAsync = DoAsyncWork();    
-    milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken);
-    std::cout << "Do async work complete. Time taken: " << milliseconds.count() / 1000 << "s " << milliseconds.count() % 1000 << "ms\n";
+    {
+        std::cout << "Do work async.\n";
+        auto timeTakenAsync = DoAsyncWork();
+        auto asyncMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTakenAsync);
+        std::cout << "Do async work complete. Time taken: " << asyncMilliseconds.count() / 1000 << "s " << asyncMilliseconds.count() % 1000 << "ms\n";
+    }
 
     system("pause");
 }
@@ -55,28 +61,34 @@ std::chrono::nanoseconds DoWork()
     return timeDiff;
 }
 
+struct FizzBuzzFuture
+{
+    FizzBuzz* fizzbuzzer = 0;
+    std::future<void> future;
+};
+
 std::chrono::nanoseconds DoAsyncWork()
 {
     auto startTime = std::chrono::high_resolution_clock::now();
 
-    std::vector<FizzBuzz*> fizzbuzzers(s_numCounters);
+    std::vector<FizzBuzzFuture> fizzbuzzers(s_numCounters);
     for (int index = 0; index < s_numCounters; ++index)
     {
-        fizzbuzzers[index] = new FizzBuzz(s_target);
+        fizzbuzzers[index].fizzbuzzer = new FizzBuzz(s_target);
     }
 
-    for (auto fb : fizzbuzzers)
+    for (int index = 0; index < s_numCounters; ++index)
     {
-        fb->DoAsyncWork();
+        fizzbuzzers[index].future = std::async(std::launch::async, &FizzBuzz::DoWork, fizzbuzzers[index].fizzbuzzer);        
     }
 
     bool allComplete = false;
     while (!allComplete)
     {
         allComplete = true;
-        for (auto fb : fizzbuzzers)
+        for (int index = 0; index < s_numCounters; ++index)
         {
-            if (!(fb->IsComplete()))
+            if (!(fizzbuzzers[index].fizzbuzzer->IsComplete()))
             {
                 allComplete = false;
                 break;
@@ -85,9 +97,9 @@ std::chrono::nanoseconds DoAsyncWork()
         std::cout << '.';
     }
 
-    for (auto fb : fizzbuzzers)
+    for (int index = 0; index < s_numCounters; ++index)
     {
-        delete fb;
+        delete fizzbuzzers[index].fizzbuzzer;
     }
 
     std::cout << std::endl;
