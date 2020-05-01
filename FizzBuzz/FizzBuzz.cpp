@@ -36,8 +36,12 @@ void FizzBuzz::DoWork()
         {
             char intbuff[10];
             memset(intbuff, 0, 10);
-            snprintf(intbuff, 10, "%d\n", index);
+            /*snprintf(intbuff, 10, "%d\n", index);
+            m_buffer += intbuff;*/
+
+            _itoa_s(index, intbuff, 10, 10);
             m_buffer += intbuff;
+            m_buffer += "\n";
         }
 
         ++index;
