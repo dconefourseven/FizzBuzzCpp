@@ -10,7 +10,7 @@ std::chrono::nanoseconds DoWork();
 std::chrono::nanoseconds DoAsyncWork();
 
 static const int s_target = 100000;
-static const int s_numCounters = 20;
+static const int s_numCounters = 200;
 
 //static std::chrono::high_resolution_clock stopWatch;
 
@@ -19,12 +19,12 @@ int main()
     std::cout << "Do work.\n";
     auto timeTaken = DoWork();
     auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken);
-    std::cout << "Do work complete. Time taken: " << milliseconds.count() << '\n';
+    std::cout << "Do work complete. Time taken: " << milliseconds.count() / 1000 << "s " << milliseconds.count() % 1000 << "ms\n";
 
     std::cout << "Do work async.\n";
     auto timeTakenAsync = DoAsyncWork();    
     milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken);
-    std::cout << "Do async work complete. Time taken: " << milliseconds.count() << '\n';
+    std::cout << "Do async work complete. Time taken: " << milliseconds.count() / 1000 << "s " << milliseconds.count() % 1000 << "ms\n";
 
     system("pause");
 }
@@ -82,12 +82,15 @@ std::chrono::nanoseconds DoAsyncWork()
                 break;
             }
         }
+        std::cout << '.';
     }
 
     for (auto fb : fizzbuzzers)
     {
         delete fb;
     }
+
+    std::cout << std::endl;
 
     auto endTime = std::chrono::high_resolution_clock::now();
     auto timeDiff = endTime - startTime;
