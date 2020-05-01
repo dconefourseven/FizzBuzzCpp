@@ -6,24 +6,33 @@
 #include <chrono>
 #include "FizzBuzz.h"
 
-size_t DoWork();
-size_t DoAsyncWork();
+std::chrono::nanoseconds DoWork();
+std::chrono::nanoseconds DoAsyncWork();
 
 static const int s_target = 100000;
 static const int s_numCounters = 20;
 
+//static std::chrono::high_resolution_clock stopWatch;
+
 int main()
 {
     std::cout << "Do work.\n";
+    auto timeTaken = DoWork();
+    auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken);
+    std::cout << "Do work complete. Time taken: " << milliseconds.count() << '\n';
 
-    DoWork();
-    DoAsyncWork();
+    std::cout << "Do work async.\n";
+    auto timeTakenAsync = DoAsyncWork();    
+    milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeTaken);
+    std::cout << "Do async work complete. Time taken: " << milliseconds.count() << '\n';
 
     system("pause");
 }
 
-size_t DoWork()
+std::chrono::nanoseconds DoWork()
 {
+    auto startTime = std::chrono::high_resolution_clock::now();
+
     std::vector<FizzBuzz*> fizzbuzzers(s_numCounters);
     for (int index = 0; index < s_numCounters; ++index)
     {
@@ -40,11 +49,16 @@ size_t DoWork()
         delete buzzer;
     }
 
-    return 0;
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto timeDiff = endTime - startTime;
+
+    return timeDiff;
 }
 
-size_t DoAsyncWork()
+std::chrono::nanoseconds DoAsyncWork()
 {
+    auto startTime = std::chrono::high_resolution_clock::now();
+
     std::vector<FizzBuzz*> fizzbuzzers(s_numCounters);
     for (int index = 0; index < s_numCounters; ++index)
     {
@@ -75,5 +89,8 @@ size_t DoAsyncWork()
         delete fb;
     }
 
-    return 0;
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto timeDiff = endTime - startTime;
+
+    return timeDiff;
 }
