@@ -18,8 +18,6 @@ public:
 
     void DoWork();
 
-    void DoAsyncWork();
-
     bool IsComplete() { return m_complete; }
 
 	// ---- Variables ----

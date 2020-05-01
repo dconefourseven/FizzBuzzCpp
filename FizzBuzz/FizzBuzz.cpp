@@ -11,6 +11,7 @@ FizzBuzz::FizzBuzz(int _target)
 
 }
 
+#define countof(array) (sizeof(array) / sizeof(array[0]))
 void FizzBuzz::DoWork()
 {
     m_buffer = "";
@@ -34,58 +35,16 @@ void FizzBuzz::DoWork()
         }
         else
         {
-            char intbuff[10];
-            memset(intbuff, 0, 10);
-            /*snprintf(intbuff, 10, "%d\n", index);
-            m_buffer += intbuff;*/
-
-            _itoa_s(index, intbuff, 10, 10);
+            // Potential for a bug here if the target exceeds 9999999999
+            char intbuff[_MAX_U64TOSTR_BASE2_COUNT];
+            memset(intbuff, 0, countof(intbuff));
+            _itoa_s(index, intbuff, countof(intbuff), 10);
             m_buffer += intbuff;
-            m_buffer += "\n";
+            m_buffer += '\n';
         }
 
         ++index;
     }
-
-    m_buffer += "End FizzBuzz!\n";
-    m_complete = true;
-}
-
-void FizzBuzz::DoAsyncWork()
-{
-    m_buffer = "";
-    m_buffer += "Begin FizzBuzz!\n";
-    m_complete = false;
-
-    std::future<void> task = std::async(std::launch::async, [&]() {
-        int index = 1;
-        while (index <= m_countTarget)
-        {
-            if (((index % 3) == 0) && ((index % 5) == 0))
-            {
-                m_buffer += "FizzBuzz\n";
-            }
-            else if ((index % 3) == 0)
-            {
-                m_buffer += "Fizz\n";
-            }
-            else if ((index % 5) == 0)
-            {
-                m_buffer += "Buzz\n";
-            }
-            else
-            {
-                char intbuff[10];
-                memset(intbuff, 0, 10);
-                snprintf(intbuff, 10, "%d\n", index);
-                m_buffer += intbuff;
-            }
-
-            ++index;
-        }
-        });
-
-    task.wait();
 
     m_buffer += "End FizzBuzz!\n";
     m_complete = true;
